@@ -13,6 +13,17 @@ use yii\filters\VerbFilter;
  */
 class AccountController extends Controller
 {
+    public function beforeAction($action)
+    {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect(['site/login']);
+        }
+        if (\Yii::$app->user->identity->role !== 'admin') {
+            throw new \yii\web\ForbiddenHttpException('Hanya admin yang boleh mengakses Akun');
+        }
+        return parent::beforeAction($action);
+    }
+    
     /**
      * @inheritDoc
      */

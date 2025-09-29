@@ -13,6 +13,14 @@ use yii\filters\VerbFilter;
  */
 class PostController extends Controller
 {
+    public function beforeAction($action)
+    {
+        if (\Yii::$app->user->isGuest) {
+            return $this->redirect(['site/login']);
+        }
+        return parent::beforeAction($action);
+    }
+
     /**
      * @inheritDoc
      */
@@ -74,6 +82,8 @@ class PostController extends Controller
                 return $this->redirect(['view', 'idpost' => $model->idpost]);
             }
         } else {
+            $model->username = \Yii::$app->user->username;
+            $model->date = date('Y-m-d H:i:s');
             $model->loadDefaultValues();
         }
 
@@ -92,14 +102,17 @@ class PostController extends Controller
     public function actionUpdate($idpost)
     {
         $model = $this->findModel($idpost);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'idpost' => $model->idpost]);
+        if (
+            \Yii::$app->user->identity->role === 'author' &&
+            $model->username !== \Yii::$app->user->username
+        ) {
+            throw new \yii\web\ForbiddenHttpException('Tidak boleh edit post orang lain.');
         }
 
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+        if ($model->load(\Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->idpost]);
+        }
+        return $this->render('update', ['model' => $model]);
     }
 
     /**
