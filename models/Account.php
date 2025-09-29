@@ -95,4 +95,14 @@ class Account extends ActiveRecord implements IdentityInterface
         return $this->hasMany(Post::class, ['username' => 'username']);
     }
 
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->isAttributeChanged('password')) {
+                $this->password = md5($this->password);
+            }
+            return true;
+        }
+        return false;
+    }
 }
