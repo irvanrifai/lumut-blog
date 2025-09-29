@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'idpost',
             'title:ntext',
             'content:ntext',
-            'date',
+            // 'date',
             'username',
             [
                 'class' => ActionColumn::className(),

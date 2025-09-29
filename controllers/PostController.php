@@ -78,12 +78,16 @@ class PostController extends Controller
         $model = new Post();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'idpost' => $model->idpost]);
+            if ($model->load($this->request->post())) {
+                // isi otomatis sebelum save
+                $model->username = \Yii::$app->user->identity->username;
+                $model->date = date('Y-m-d H:i:s');
+
+                if ($model->save()) {
+                    return $this->redirect(['view', 'idpost' => $model->idpost]);
+                }
             }
         } else {
-            $model->username = \Yii::$app->user->identity->username;
-            $model->date = date('Y-m-d H:i:s');
             $model->loadDefaultValues();
         }
 
@@ -110,7 +114,7 @@ class PostController extends Controller
         }
 
         if ($model->load(\Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->idpost]);
+            return $this->redirect(['view', 'idpost' => $model->idpost]);
         }
         return $this->render('update', ['model' => $model]);
     }
