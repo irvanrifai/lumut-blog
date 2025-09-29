@@ -63,8 +63,17 @@ class PostController extends Controller
      */
     public function actionView($idpost)
     {
+        $model = $this->findModel($idpost);
+
+        if (
+            \Yii::$app->user->identity->role !== 'admin' &&
+            $model->username !== \Yii::$app->user->identity->username
+        ) {
+            throw new \yii\web\ForbiddenHttpException('Anda tidak boleh melihat post ini.');
+        }
+
         return $this->render('view', [
-            'model' => $this->findModel($idpost),
+            'model' => $model,
         ]);
     }
 

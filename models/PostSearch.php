@@ -44,6 +44,9 @@ class PostSearch extends Post
         $query = Post::find();
 
         // add conditions that should always apply here
+        if (!\Yii::$app->user->isGuest && \Yii::$app->user->identity->role !== 'admin') {
+            $query->andWhere(['username' => \Yii::$app->user->identity->username]);
+        }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
