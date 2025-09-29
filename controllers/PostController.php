@@ -82,7 +82,7 @@ class PostController extends Controller
                 return $this->redirect(['view', 'idpost' => $model->idpost]);
             }
         } else {
-            $model->username = \Yii::$app->user->username;
+            $model->username = \Yii::$app->user->identity->username;
             $model->date = date('Y-m-d H:i:s');
             $model->loadDefaultValues();
         }
@@ -104,7 +104,7 @@ class PostController extends Controller
         $model = $this->findModel($idpost);
         if (
             \Yii::$app->user->identity->role === 'author' &&
-            $model->username !== \Yii::$app->user->username
+            $model->username !== \Yii::$app->user->identity->username
         ) {
             throw new \yii\web\ForbiddenHttpException('Tidak boleh edit post orang lain.');
         }

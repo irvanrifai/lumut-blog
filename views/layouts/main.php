@@ -39,19 +39,21 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav'],
         'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
+            ['label' => 'Beranda', 'url' => ['/site/index']],
+            ['label' => 'Post', 'url' => ['/post/index']],
+            ['label' => 'Akun', 'url' => ['/account/index'], 'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role === 'admin'],
             Yii::$app->user->isGuest
                 ? ['label' => 'Login', 'url' => ['/site/login']]
-                : '<li class="nav-item">'
-                    . Html::beginForm(['/site/logout'])
-                    . Html::submitButton(
+                : (
+                    '<li>'
+                    . \yii\helpers\Html::beginForm(['/site/logout'], 'post')
+                    . \yii\helpers\Html::submitButton(
                         'Logout (' . Yii::$app->user->identity->username . ')',
-                        ['class' => 'nav-link btn btn-link logout']
+                        ['class' => 'btn btn-link logout']
                     )
-                    . Html::endForm()
+                    . \yii\helpers\Html::endForm()
                     . '</li>'
+                )
         ]
     ]);
     NavBar::end();
